@@ -1,7 +1,12 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+
+const github = require('../helpers/github');
+
 let app = express();
 
 app.use(express.static(__dirname + '/../client/dist'));
+app.use(bodyParser.json());
 
 app.post('/repos', function (req, res) {
   // TODO - your code here!
@@ -9,9 +14,19 @@ app.post('/repos', function (req, res) {
   // and get the repo information from the github API, then
   // save the repo information in the database
 
+  var searchTerm = req.body.searchTerm;
+
+  github.getReposByUsername(searchTerm, function(err, success){
+    if (err) { throw err; }
+    
+
+  });
+
   // call a helper function that takes in github username
   // helper function makes an ajax request to github
   // when request is complete and returns a list of repos from the username, call model.create on each repo in the db
+
+
 });
 
 app.get('/repos', function (req, res) {
