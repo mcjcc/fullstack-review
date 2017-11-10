@@ -9,13 +9,13 @@ let getReposByUsername = (searchTerm, callback) => {
 
   // To get all public repos from a user:
   // curl -i https://api.github.com/users/octocat/repos
-
+  var githubToken = process.env.GITHUB_API_TOKEN || config.TOKEN;
   let options = {
     url: `https://api.github.com/users/${searchTerm}/repos`,
     json: true,
     headers: {
       'User-Agent': 'request',
-      'Authorization': `token ${config.TOKEN}`,
+      'Authorization': `token ${githubToken}`,
       'Accept': 'application/vnd.github.v3+json'
     }
   };
