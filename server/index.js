@@ -22,22 +22,27 @@ app.post('/repos', function (req, res) {
   github.getReposByUsername(searchTerm, function(error, response, body){
     if (error) { throw error; }
 
-    // body is an array of repo json objects
-    body.forEach(function(repo){
-      database.save(repo, function(error, req, res){
-        res.send('record saved!');
-      });
+
+    database.save(body, function(error, message){
+      if (error){
+        res.send(error);
+      }
+      res.send(message);
     });
 
   });
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
 
-  // access repo model.get(<column name>,<top number of repos to retrieve>)
-  // respond with the results
+  // This route should send back the top 25 repos
+  var numberOfItems = 25;
+  var columnName = "repo_stargazers_count";
+
+  database.retrieve(columnName ,numberOfItems, function(error, results){
+    res.send(results);
+  });
+  
 });
 
 let port = 1128;

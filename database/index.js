@@ -27,11 +27,34 @@ let repoSchema = mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (req, res, repoObject, callback) => {
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
-  var toSaveObject = {
+let retrieve = (columnName, limit, callback) => {
+  // db.repos.find().sort({'repo_stargazers_count': -1}).limit(25);
+
+  var sortByObject = {};
+
+  // -1 means sort by descending
+  sortByObject[columnName] = -1;
+
+  Repo.find().sort(sortByObject).limit(limit).select("repo_name owner_name repo_html_url owner_avatar_url repo_stargazers_count").exec(function(error, repos){
+    if (error) {callback(error, null);}
+    callback(null, repos);
+  });
+
+  // var query = Repo.find().sort(sortByObject).limit(limit);
+  // query.select("repo_name owner_name repo_stargazers_count");
+
+  // query.exec(function(error, repos){
+  //   if (error) { callback(error, null); }
+  //   console.log('repos', repos);
+  //   callback(null, repos);
+  // });
+}
+
+let save = (dataArray, callback) => {
+
+  dataArray.forEach(function(repoObject){
+
+    var toSaveObject = {
       id: repoObject.id,
       repo_name: repoObject.name,
       repo_full_name: repoObject.full_name,
@@ -49,16 +72,17 @@ let save = (req, res, repoObject, callback) => {
     };
 
 
-  var repo = new Repo(repoObject);
+    var repo = new Repo(toSaveObject);
 
-  repo.save()
-    .then(item => {
-      callback(null, req, res);
-    })
-    .catch(error => {
-      callback(error, req, res);
-    })
-
+    repo.save()
+      .then(item => {
+        callback();
+      })
+      .catch(error => {
+        callback(error);
+      });
+  });
 }
 
+module.exports.retrieve = retrieve;
 module.exports.save = save;
