@@ -1,5 +1,10 @@
 const request = require('request');
-const config = require('../config.js');
+if (process.env.NODE_ENV === 'development') {
+  const config = require('../config.js');
+  var githubToken = config.TOKEN;
+} else {
+  var githubToken = process.env.GITHUB_API_TOKEN;
+}
 
 let getReposByUsername = (searchTerm, callback) => {
   // TODO - Use the request module to request repos for a specific
@@ -9,7 +14,7 @@ let getReposByUsername = (searchTerm, callback) => {
 
   // To get all public repos from a user:
   // curl -i https://api.github.com/users/octocat/repos
-  var githubToken = process.env.GITHUB_API_TOKEN || config.TOKEN;
+
   let options = {
     url: `https://api.github.com/users/${searchTerm}/repos`,
     json: true,
